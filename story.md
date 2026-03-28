@@ -1,6 +1,6 @@
 The Last Line
 
-Rain hammered the window like fists. I sat at the desk, old typewriter clacking—my last job before the power cut. The page said:
+A fine mist clung to the window-pane like a shroud. I sat at my desk, the old typewriter clacking—my last job before the power cut. The page said:
 
 "Dear reader, you're next."
 
