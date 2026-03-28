@@ -1,0 +1,5 @@
+- Narrator killed a kid in an alley in 2019
+- The victim did not actually die
+- The typewriter is the only supernatural object
+- The final twist is that the visitor is the narrator’s future self
+- Story must stay under 2000 words total

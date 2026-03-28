@@ -1,0 +1,5 @@
+- First-person, intimate, unreliable narrator
+- Short, punchy sentences mixed with longer dread-filled ones
+- Sensory focus: sound, smell, touch over visual
+- Never explain the supernatural — only show its effect on the narrator
+- Tone: quiet dread that builds to sudden visceral horror
