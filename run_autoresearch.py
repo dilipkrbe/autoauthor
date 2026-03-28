@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Autoresearch Story Refinement Launcher
-Fully local with LM Studio + Aider + Auto Commit
+Fully local with LM Studio + Aider
 """
 
 import os
@@ -16,7 +16,7 @@ def print_header():
     clear_screen()
     print("=" * 85)
     print("          EXTENDED AUTORESEARCH - STORY REFINEMENT")
-    print("       Fully Local • LM Studio + Aider • Karpathy Style Keep/Revert")
+    print("       Fully Local • LM Studio + Aider • Karpathy Style")
     print("=" * 85)
     print()
 
@@ -51,17 +51,29 @@ def get_user_choices():
     print(f"\nSelected → Writer: {writer_name} | Reviewer: {reviewer_name}")
     return writer_name, reviewer_name
 
+def get_iterations():
+    while True:
+        try:
+            n = int(input("\nHow many cycles do you want to run? (recommended 20-60): "))
+            if n > 0:
+                return n
+            print("Please enter a positive number.")
+        except ValueError:
+            print("Please enter a valid number.")
+
 def main():
     print_header()
 
     print("Make sure LM Studio server is running on http://localhost:1234/v1")
-    input("\nPress Enter when ready...")
+    input("\nPress Enter when LM Studio is ready...")
 
     writer, reviewer = get_user_choices()
+    iterations = get_iterations()
 
     print(f"\nStarting autonomous autoresearch loop...")
     print(f"Writer: {writer} | Reviewer: {reviewer}")
-    print("Good edits will be automatically committed. Bad edits will be reverted.\n")
+    print(f"Will run up to {iterations} cycles.")
+    print("Good edits will be auto-committed. Bad edits will be reverted.\n")
 
     confirm = input("Type 'yes' to start: ").strip().lower()
     if confirm != "yes":
@@ -72,15 +84,16 @@ def main():
 
 Writer Style: {writer}
 Reviewer Style: {reviewer}
+Target cycles: {iterations}
 
 Follow program.md strictly.
 - Deliberate deeply before every edit.
 - Always keep the entire story in context.
-- Mimic the chosen writer style when editing.
-- After edit, run `python score_story.py` and parse CHILL_FACTOR.
-- If chill factor improves by 0.5 or more AND reviewer approves → commit with a short message.
+- Mimic the chosen writer style when editing story.md.
+- After each edit, run `python score_story.py` and parse CHILL_FACTOR.
+- If chill factor improves by 0.5 or more AND reviewer approves → commit the change.
 - Otherwise revert the change.
-- Be rigorous and patient."""
+- Be rigorous and patient. Stop after roughly {iterations} meaningful attempts."""
 
     try:
         cmd = [
@@ -91,12 +104,15 @@ Follow program.md strictly.
             "--model", "openai/qwen3.5-9b-null-space-abliterated-i1",
             "--openai-api-base", "http://localhost:1234/v1",
             "--openai-api-key", "lm-studio",
-            "--auto-commits",                    # Enable auto commit (real autoresearch feel)
-            "--commit-prompt", "Improved chill factor using {writer} style",   # Simple prompt to avoid hanging
+            "--auto-commits",
+            "--commit-prompt", "Improved chill factor using chosen writer style",
             "--message", system_message
         ]
 
         print("\n🚀 Launching Aider autonomous loop...\n")
+        print("You can stop anytime with Ctrl+C")
+        time.sleep(2)
+
         subprocess.run(cmd, check=True)
 
     except FileNotFoundError:
