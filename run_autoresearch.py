@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Autoresearch Story Refinement Launcher
-Fully local with LM Studio + Aider
+Autoresearch Story Refinement Launcher - Fixed Version
 """
 
 import os
@@ -14,10 +13,10 @@ def clear_screen():
 
 def print_header():
     clear_screen()
-    print("=" * 85)
+    print("=" * 90)
     print("          EXTENDED AUTORESEARCH - STORY REFINEMENT")
     print("       Fully Local • LM Studio + Aider • Karpathy Style")
-    print("=" * 85)
+    print("=" * 90)
     print()
 
 def get_user_choices():
@@ -54,7 +53,7 @@ def get_user_choices():
 def get_iterations():
     while True:
         try:
-            n = int(input("\nHow many cycles do you want to run? (recommended 20-60): "))
+            n = int(input("\nHow many cycles do you want to run? (20-60 recommended): "))
             if n > 0:
                 return n
             print("Please enter a positive number.")
@@ -65,35 +64,39 @@ def main():
     print_header()
 
     print("Make sure LM Studio server is running on http://localhost:1234/v1")
-    input("\nPress Enter when LM Studio is ready...")
+    input("\nPress Enter when ready...")
 
     writer, reviewer = get_user_choices()
     iterations = get_iterations()
 
-    print(f"\nStarting autonomous autoresearch loop...")
+    print(f"\nStarting autonomous autoresearch...")
     print(f"Writer: {writer} | Reviewer: {reviewer}")
-    print(f"Will run up to {iterations} cycles.")
-    print("Good edits will be auto-committed. Bad edits will be reverted.\n")
+    print(f"Target: {iterations} cycles")
+    print("Good edits will be auto-committed.\n")
 
     confirm = input("Type 'yes' to start: ").strip().lower()
     if confirm != "yes":
         print("Cancelled.")
         return
 
-    system_message = f"""You are running in extended autonomous autoresearch mode.
+    system_message = f"""You are in strict autonomous autoresearch mode for improving a thriller story.
 
 Writer Style: {writer}
 Reviewer Style: {reviewer}
 Target cycles: {iterations}
 
-Follow program.md strictly.
-- Deliberate deeply before every edit.
-- Always keep the entire story in context.
-- Mimic the chosen writer style when editing story.md.
-- After each edit, run `python score_story.py` and parse CHILL_FACTOR.
-- If chill factor improves by 0.5 or more AND reviewer approves → commit the change.
-- Otherwise revert the change.
-- Be rigorous and patient. Stop after roughly {iterations} meaningful attempts."""
+CRITICAL INSTRUCTIONS:
+- Always follow program.md exactly.
+- Deliberate deeply before suggesting any change.
+- ONLY edit story.md. Never create new files.
+- When you want to make a change, output the full new content of story.md using Aider's normal edit format.
+- After the edit is applied, I will run score_story.py and show you the CHILL_FACTOR.
+- If CHILL_FACTOR improves by 0.5 or more and the change is good, I will commit it.
+- Do NOT output any text that looks like a filename.
+- Do NOT say "Create new file".
+- Be concise in your reasoning, then make one focused edit.
+
+Start the first iteration now."""
 
     try:
         cmd = [
@@ -105,20 +108,18 @@ Follow program.md strictly.
             "--openai-api-base", "http://localhost:1234/v1",
             "--openai-api-key", "lm-studio",
             "--auto-commits",
-            "--commit-prompt", "Improved chill factor using chosen writer style",
+            "--commit-prompt", "Improved chill factor",
             "--message", system_message
         ]
 
-        print("\n🚀 Launching Aider autonomous loop...\n")
-        print("You can stop anytime with Ctrl+C")
-        time.sleep(2)
-
+        print("\n🚀 Launching Aider...\n")
         subprocess.run(cmd, check=True)
 
     except FileNotFoundError:
-        print("\nError: aider not found. Run: pip install --upgrade aider-chat")
+        print("\nError: aider not found.")
+        print("Run: pip install --upgrade aider-chat")
     except KeyboardInterrupt:
-        print("\n\nStopped by user.")
+        print("\nStopped by user.")
     except Exception as e:
         print(f"\nError: {e}")
 
