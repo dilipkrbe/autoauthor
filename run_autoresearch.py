@@ -93,13 +93,12 @@ Follow program.md strictly.
 - Mimic the chosen writer style when editing story.md.
 - Use the chosen reviewer for honest critique.
 - After each edit, run `python score_story.py` and parse CHILL_FACTOR.
-- Keep (git commit) only if chill factor improves by ≥ 0.5 AND reviewer approves.
+- Keep only if chill factor improves by ≥ 0.5 AND reviewer approves.
 - Otherwise revert.
 - Be patient and rigorous. Quality over quantity."""
 
     try:
-        # Correct way: each argument as separate list element
-                cmd = [
+        cmd = [
             "aider",
             "story.md", "program.md", "score_story.py",
             "voice.md", "canon.md", "outline.md",
@@ -107,18 +106,21 @@ Follow program.md strictly.
             "--model", "openai/qwen3.5-9b-null-space-abliterated-i1",
             "--openai-api-base", "http://localhost:1234/v1",
             "--openai-api-key", "lm-studio",
-            "--no-auto-commits",          # ← This prevents hanging
+            "--no-auto-commits",           # Prevents hanging on commit message
             "--message", system_message
         ]
 
         print("\nLaunching Aider...\n")
+        print("You can stop anytime with Ctrl+C")
+        time.sleep(2)
+
         subprocess.run(cmd, check=True)
 
     except FileNotFoundError:
         print("\nError: 'aider' command not found.")
-        print("Even though pip installed it, it may not be in PATH.")
-        print("Try running: pip install --upgrade aider-chat")
-        print("Or run aider directly from terminal to test.")
+        print("Run this in terminal: pip install --upgrade aider-chat")
+    except KeyboardInterrupt:
+        print("\n\nStopped by user.")
     except Exception as e:
         print(f"\nError: {e}")
 
